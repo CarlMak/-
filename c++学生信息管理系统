@@ -1,1 +1,536 @@
+#include<iostream>
+#include<stdlib.h>
+#include<windows.h>
+#include<stdio.h>
+#include<conio.h>
+
+using namespace std;
+
+
+int stuNum;
+
+struct student
+{
+    char name[10]; //学生名字
+    char studentNum[15]; //学号
+    char sex[5]; //性别
+    char birth[15]; //出生年月日
+    char inClass[20]; //班级
+    char phoneNum[20]; //电话号码
+
+} student[100];
+
+void show(int op);
+//封面cout
+void cover()
+{
+    int b;
+    for(b = 0; b < 5; b++)
+    {
+        cout<<endl;
+    }
+    cout<< "\t\t\t\t" << "   ******学生学籍管理系统*******" << endl << endl;
+    cout<<"\t\t\t\t*\t1 输入学生学籍信息\t*"<<endl<<endl;
+    cout<<"\t\t\t\t*\t2 查看学生学籍信息\t*"<<endl<<endl;
+    cout<<"\t\t\t\t*\t3 删除学生学籍信息\t*"<<endl<<endl;
+    cout<<"\t\t\t\t*\t4 更改学生学籍信息\t*"<<endl<<endl;
+    cout<<"\t\t\t\t*\t5 退出\t*";
+    cout<<endl <<endl <<endl;
+}
+
+void cover2() ///查询的第二级封面
+{
+    system("cls");
+    for(int b = 0; b < 5; b++)
+    {
+        cout<<endl;
+    }
+    cout<<"\t\t\t\t\t***学生学籍管理系统***"<<endl<<endl;
+    int op;
+    cout<< "\t\t\t1->按学生姓名查询" << endl << "\t\t\t2->按学生学号查询" << endl << "\t\t\t3->按班级查询" << endl << "\t\t\t4->查男生" << endl << "\t\t\t5->查女生" << endl << "\t\t\t6->查询全部" << endl  << "\t\t\t0->返回上一层" << endl<< endl << "\t\t选择： ";
+    cin >> op;
+    show(op);
+}
+//输入学生信息 第一个选项
+void WriteIn()
+{
+    system("cls"); //清屏函数
+    FILE *f; //文件指针 指向data.txt
+    int b;
+    int num; //需要输入的学生信息的数量
+    for(b = 0; b < 5; b++)
+    {
+        cout<<endl;
+    }
+    cout<<"\t\t\t\t\t***学生学籍管理系统***"<<endl<<endl;
+    cout<<"\t\t\t请输入需要输入的学生信息数量： ";
+    cin>>num;
+    FILE *s; //指向mark.txt的文件指针 提取stuNum
+    s = fopen("mark.txt", "r"); //r为只读 读取操作
+    char g = getc(s);
+    fclose(s);
+    FILE *a; //指向mark.txt 用于修改mark.txt
+    a = fopen("mark.txt", "w+"); //w+是读和写操作 一旦打开文件，里面的数据清空
+    int x = g - '0';
+    stuNum = x + num;
+    char ch = stuNum + '0';
+    fputc(ch, s);
+    fclose(a);
+    int i;
+    for(i = 0; i < num; i++)
+    {
+        cout<<"\t\t\t请输入学生姓名： ";
+        cin>>student[i].name;
+        cout<<"\t\t\t请输入学生学号： ";
+        cin>>student[i].studentNum;
+        cout<<"\t\t\t请输入学生性别： ";
+        cin>>student[i].sex;
+        cout<<"\t\t\t请输入学生出生日期(YY/MM/DD)： ";
+        cin>>student[i].birth;
+        cout<<"\t\t\t请输入学生班级： ";
+        cin>>student[i].inClass;
+        cout<<"\t\t\t请输入学生手机号： ";
+        cin>>student[i].phoneNum;
+        cout<<endl;
+        getchar();
+    }
+    f = fopen("data.txt", "a"); // a为追加 在原有的文件的内容上添加
+    for(i = 0; i < num; i++)
+    {
+        fwrite(&student[i], sizeof(struct student), 1, f);
+    }
+    fclose(f);
+    for(b = 0; b < 3; b++)
+    {
+        cout<<endl;
+    }
+    cout<<"输入完成";
+    getchar();
+    system("cls");
+    cover();
+}
+
+void show(int op)
+{
+    system("cls");
+    FILE *s;
+    s = fopen("mark.txt", "r"); //提取mark.txt的数据 即stuNum
+    char ch = getc(s);
+    int x = ch - '0'; ///stuNum转化为整形数字，学生信息的数量
+    fclose(s);
+    int i, j, b;
+    for(b = 0; b < 5; b++)
+    {
+        cout<<endl;
+    }
+    if(op == 6)
+    {
+        system("cls");
+        FILE *f;
+        for(b = 0; b < 5; b++)
+        {
+            cout<<endl;
+        }
+        f = fopen("data.txt", "r");
+        cout<<"\t\t\t\t\t***学生学籍管理系统***"<<endl<<endl;
+        //cout<<"姓名\t\t学号\t\t性别\t\t出生日期\t\t电话号码\t\t班级\n";
+        for(i = 0; i < x; i++)
+        {
+            fread(&student[i], sizeof(struct student), 1, f);
+            //从data.txt中提取数据 sizeof为取结构体student的数据大小的数据 读取1次 f为索引指向data.txt
+           cout<< endl << "\t姓名:" << student[i].name <<"    ";
+                cout<<"学号:" << student[i].studentNum<< "    ";
+                cout<<"性别:" << student[i].sex<< "    ";
+                cout<<"出生日期:" << student[i].birth<< "    ";
+                cout<<"电话号码:" << student[i].phoneNum<< "    ";
+                cout<<"班级:" << student[i].inClass;
+                cout << endl << "--------------------------------------" << endl;
+        }
+        fclose(f);
+    }
+    else if(op == 2)
+    {
+        system("cls");
+        FILE *f;
+        int b, i;
+        for(b = 0; b < 5; b++)
+        {
+            cout<<endl;
+        }
+        f = fopen("data.txt", "r");
+        cout<<"\t\t\t\t\t***学生学籍管理系统***"<<endl<<endl;
+        char stN[20];
+        cout<<"\t\t请输入需要查询的学生学号： ";
+        cin >> stN;
+        for(i = 0; i < x; i++)
+        {
+            fread(&student[i], sizeof(struct student), 1, f);
+            if(!strcmp(student[i].studentNum, stN)) ///strcmp函数，比较两个字符串是否相等，相等为1，不相等为0
+            {
+                cout<< endl << "\t姓名:" << student[i].name <<"    ";
+                cout<<"学号:" << student[i].studentNum<< "    ";
+                cout<<"性别:" << student[i].sex<< "    ";
+                cout<<"出生日期:" << student[i].birth<< "    ";
+                cout<<"电话号码:" << student[i].phoneNum<< "    ";
+                cout<<"班级:" << student[i].inClass;
+                cout << endl << "--------------------------------------" << endl;
+                break;
+            }
+        }
+        fclose(f);
+    }
+    else if(op == 1)
+    {
+        system("cls");
+        FILE *f;
+        int b, i;
+        for(b = 0; b < 5; b++)
+        {
+            cout<<endl;
+        }
+        f = fopen("data.txt", "r");
+        cout<<"\t\t\t\t\t***学生学籍管理系统***"<<endl<<endl;
+        char na[20];
+        cout<<"\t\t请输入需要查询的学生姓名： ";
+        cin >> na;
+        //cout << na << endl;
+        int len1; //记录学生名字的长度
+        int len2 = strlen(na); //记录输入的字符串的长度
+        int flag; //记录匹配的字符数，用作是否包含的依据
+        for(i = 0; i < x; i++)
+        {
+            flag = 0;
+            fread(&student[i], sizeof(struct student), 1, f);
+            len1 = strlen(student[i].name);
+            for(j = 0; j < len1; j++)
+            {
+                for(int z = 0; z < len2; z++)
+                {
+                    if(student[i].name[j] == na[z]) //每个字符比较，若相同flag++
+                    {
+                        //cout << student[i].name[j] << "&&" << na[z] <<endl;
+                        flag++;
+                    }
+                }
+                if(flag == len2)
+                    break;
+            }
+            if(flag == len2) //最后如果flag与输入字符串的长度相同，就是说学生名字中完全包含输入的字符串，输出信息
+            {
+                cout<< endl << "\t姓名:" << student[i].name <<"    ";
+                cout<<"学号:" << student[i].studentNum<< "    ";
+                cout<<"性别:" << student[i].sex<< "    ";
+                cout<<"出生日期:" << student[i].birth<< "    ";
+                cout<<"电话号码:" << student[i].phoneNum<< "    ";
+                cout<<"班级:" << student[i].inClass;
+                cout << endl << "--------------------------------------" << endl;
+            }
+        }
+        fclose(f);
+    }
+    else if(op == 3)
+    {
+        system("cls");
+        FILE *f;
+        int b, i;
+        for(b = 0; b < 5; b++)
+        {
+            cout<<endl;
+        }
+        f = fopen("data.txt", "r");
+        cout<<"\t\t\t\t\t***学生学籍管理系统***"<<endl<<endl;
+        char cl[20];
+        cout<<"\t\t请输入需要查询的班级： ";
+        cin >> cl;
+        for(i = 0; i < x; i++)
+        {
+            fread(&student[i], sizeof(struct student), 1, f);
+            if(!strcmp(student[i].inClass, cl))
+            {
+                cout<< endl << "\t姓名:" << student[i].name <<"    ";
+                cout<<"学号:" << student[i].studentNum<< "    ";
+                cout<<"性别:" << student[i].sex<< "    ";
+                cout<<"出生日期:" << student[i].birth<< "    ";
+                cout<<"电话号码:" << student[i].phoneNum<< "    ";
+                cout<<"班级:" << student[i].inClass;
+                cout << endl << "--------------------------------------" << endl;
+                break;
+            }
+        }
+        fclose(f);
+    }
+    else if(op == 4)
+    {
+        system("cls");
+        FILE *f;
+        int b, i;
+        for(b = 0; b < 5; b++)
+        {
+            cout<<endl;
+        }
+        f = fopen("data.txt", "r");
+        cout<<"\t\t\t\t\t***学生学籍管理系统***"<<endl<<endl;
+        for(i = 0; i < x; i++)
+        {
+            fread(&student[i], sizeof(struct student), 1, f);
+            if(!strcmp(student[i].sex, "男"))
+            {
+                cout<< endl << "\t姓名:" << student[i].name <<"    ";
+                cout<<"学号:" << student[i].studentNum<< "    ";
+                cout<<"性别:" << student[i].sex<< "    ";
+                cout<<"出生日期:" << student[i].birth<< "    ";
+                cout<<"电话号码:" << student[i].phoneNum<< "    ";
+                cout<<"班级:" << student[i].inClass;
+                cout << endl << "--------------------------------------" << endl;
+                break;
+            }
+        }
+        fclose(f);
+    }
+    else if(op == 5)
+    {
+        system("cls");
+         FILE *f;
+        int b, i;
+        for(b = 0; b < 5; b++)
+        {
+            cout<<endl;
+        }
+        f = fopen("data.txt", "r");
+        cout<<"\t\t\t\t\t***学生学籍管理系统***"<<endl<<endl;
+        for(i = 0; i < x; i++)
+        {
+            fread(&student[i], sizeof(struct student), 1, f);
+            if(!strcmp(student[i].sex, "女"))
+            {
+                cout<< endl << "\t姓名:" << student[i].name <<"    ";
+                cout<<"学号:" << student[i].studentNum<< "    ";
+                cout<<"性别:" << student[i].sex<< "    ";
+                cout<<"出生日期:" << student[i].birth<< "    ";
+                cout<<"电话号码:" << student[i].phoneNum<< "    ";
+                cout<<"班级:" << student[i].inClass;
+                cout << endl << "--------------------------------------" << endl;
+                break;
+            }
+        }
+        fclose(f);
+    }
+    else if(op == 0)
+    {
+        cover();
+        return;
+    }
+    for(b = 0; b < 3; b++)
+    {
+        cout<<endl;
+    }
+    cout<<"按任意键返回....";
+    while(1)
+    {
+        if(kbhit())
+        {
+            system("cls");
+            cover2();
+            break;
+        }
+    }
+}
+
+void Del()
+{
+    FILE *of, *nf; //of指向旧的文件没有执行删除操作的 nf指向新的临时文件
+    FILE *q; //为删除操作的遍历而设的临时文件指针 指向mark.txt
+    char an[10]; //询问是否继续字符串
+    int i,b;
+    char dName[10];
+    int tag = 0;
+    do
+    {
+        system("cls");
+        for(b = 0; b < 5; b++)
+        {
+            cout<<endl;
+        }
+        of  = fopen("data.txt", "r+"); //oldfile 旧的文件没有执行删除操作的
+        nf = fopen("temp.txt", "w+");  //newfile 新的临时文件
+        q = fopen("mark.txt", "r");
+        char l = fgetc(q);
+        int x = l - '0';
+        fclose(q);
+        cout<<"\t\t\t\t\t***学生学籍管理系统***"<<endl<<endl;
+        cout<<"\t\t\t请输入需要删除的学生的姓名： ";
+        cin>>dName;
+        for(i = 0; i < x; i++)
+        {
+            fread(&student[i], sizeof(struct student), 1, of);
+            //cout<<"**%s\n", student[i].name);
+            if(strcmp(student[i].name, dName) != 0)
+            {
+                fwrite(&student[i], sizeof(struct student), 1, nf);
+            }
+            else if(strcmp(student[i].name, dName) == 0)
+            {
+                tag = 1;
+            }
+        }
+        fclose(of);
+        fclose(nf);
+        FILE *acf = fopen("temp.txt", "r"); //指向临时文件，准备数据迁移
+        FILE *ruf = fopen("data.txt", "w+"); //指向data.txt 写入数据
+        while(fread(&student[i], sizeof(struct student), 1, acf)) //当还能读出数据时
+        {
+            fwrite(&student[i], sizeof(struct student), 1, ruf); //往data.txt写数据
+        }
+        fclose(acf);
+        fclose(ruf);
+        for(b = 0; b < 2; b++)
+        {
+            cout<<endl;
+        }
+        if(tag == 1)
+        {
+            FILE *s;  //更新stuNum的值和mark.txt的数据
+            s = fopen("mark.txt", "r");
+            char g = getc(s);
+            fclose(s);
+            FILE *a;
+            a = fopen("mark.txt", "w+");
+            int x = g - '0';
+            stuNum = x - 1;
+            char ch = stuNum + '0';
+            fputc(ch, s);
+            fclose(a);
+            cout<<"\t\t\t\t\t删除成功！";
+        }
+        else
+        {
+            cout<<"\t\t\t删除失败，没有学生信息！";
+        }
+        cout<<endl << "\t\t是否继续更改信息？(yes or no)...";
+        cin>>an;
+    }
+    while(strcmp(an, "yes") == 0);
+    cout << "按下任意键返回。。。";
+    while(1)
+    {
+        if(kbhit())
+        {
+            system("cls");
+            cover();
+            break;
+        }
+    }
+}
+
+void ReWrite()
+{
+    FILE *cf,*pf;
+    char an[10];
+    int b, i;
+    int flag;
+    char Rname[10];
+    do
+    {
+        flag = 0;
+        system("cls");
+        for(b = 0; b < 5; b++)
+        {
+            cout<<endl;
+        }
+        cf = fopen("data.txt", "r+");
+        pf = fopen("temp.txt", "w+");
+        cout<<"\t\t\t\t\t***学生学籍管理系统***"<<endl<<endl;
+        cout<<"\t\t\t请输入需要更改信息的学生姓名： ";
+        cin>>Rname;
+        cout<<endl;
+        for(i = 0; i < stuNum; i++)
+        {
+            fread(&student[i], sizeof(struct student), 1, cf);
+            if(strcmp(student[i].name, Rname)== 0)
+            {
+                flag = 1;
+                cout<<"\t\t\t请输入学生姓名： ";
+                cin>>student[i].name;
+                cout<<"\t\t\t请输入学生学号： ";
+                cin>>student[i].studentNum;
+                cout<<"\t\t\t请输入学生性别： ";
+                cin>>student[i].sex;
+                cout<<"\t\t\t请输入学生出生日期(YY/MM/DD)： ";
+                cin>>student[i].birth;
+                cout<<"\t\t\t请输入学生班级： ";
+                cin>>student[i].inClass;
+                cout<<"\t\t\t请输入学生手机号： ";
+                cin>>student[i].phoneNum;
+                fwrite(&student[i], sizeof(struct student), 1, pf);
+                continue;
+            }
+            fwrite(&student[i], sizeof(struct student), 1, pf);
+        }
+        fclose(cf);
+        fclose(pf);
+        FILE *acf, *ruf;
+        acf = fopen("temp.txt", "r");
+        ruf = fopen("data.txt", "w+");
+        for(i = 0; i < stuNum; i++)
+        {
+            fread(&student[i], sizeof(struct student), 1, acf);
+            fwrite(&student[i], sizeof(struct student), 1, ruf);
+        }
+        fclose(acf);
+        fclose(ruf);
+        if(flag == 1)
+        {
+            cout<<"\n\t\t\t更改信息成功！"<<endl<<endl;
+        }
+        else if(flag == 0)
+        {
+            cout<<"\n\t\t\t更改信息失败！"<<endl<<endl;
+        }
+        cout<<"\t\t是否继续更改信息？(yes or no)...";
+        cin>>an;
+    }
+    while(strcmp(an, "yes") == 0);
+    system("cls");
+    cover();
+}
+
+
+int main()
+{
+    system("color F5");
+    cover();
+    stuNum = 0;
+    int option;
+    while(cin>>option)
+    {
+        if(option == 5)
+        {
+            system("cls");
+            for(option = 0; option < 5; option++)
+            {
+                cout<<endl;
+            }
+            cout<<"\t\t\t\t谢谢使用"<<endl<<endl;
+            exit(-1);
+        }
+        switch(option)
+        {
+            case 1:
+                WriteIn();
+                break;
+            case 2:
+                cover2();
+                break;
+            case 3:
+                Del();
+                break;
+            case 4:
+                ReWrite();
+                break;
+        }
+    }
+    return 0;
+}
+
+
 
